@@ -1,0 +1,42 @@
+---
+layout: default
+title: "Rainbow Gauge Theory"
+---
+
+<h2>Rainbow Gauge Theory (Loop Model)</h2>
+
+<div class="sim-container">
+  <canvas id="lattice" width="400" height="400" style="border:1px solid #aaa;"></canvas>
+
+  <div class="controls">
+    $\beta H = - h \sum_{e} (\sigma_e > 0)$
+    <div>
+      <label>System size L = <span id="Lval">NULL</span></label>
+      <input type="range" id="Lslider" min="50" max="200" step="2">
+    </div>
+
+    <div>
+      <label>Tension h = <span id="hval">NULL</span></label>
+      <input type="range" id="hslider" min="-1" max="2" step="0.02">
+    </div>
+
+    <div>
+      <label>Speed = <span id="Speedval">NULL</span></label>
+      <input type="range" id="Speedslider" min="0.1" max="5" step="0.1">
+    </div>
+
+    <div>
+        <button id="toggleBtn">⏸️ Pause</button>
+    </div>
+  </div>
+
+  <!-- <p>Energy per edge: <strong><span id="Edisp">0.00</span></strong></p> -->
+</div>
+
+<p style="max-width:600px">
+Edges represent spins, with thin black lines for 0 and thick colored lines for the nontrivial states.
+Each Monte Carlo step flips all four edges around a random plaquette,  
+accepted with probability exp(–ΔE/T).  
+</p>
+
+<script src="{{ '/assets/js/rainbow.js' | relative_url }}"></script>
