@@ -3,14 +3,11 @@
 ---
 
 
-// @import "minima";
-
-@use "variables";
-@use "base";
-@use "layout";
-@use "syntax-highlighting";
+@import "minima";
 
 // Custom styles can be added here
+
+// --- Styles for the footer social media icons ---
 
 ul.social-media-list {
   display: flex;
@@ -21,23 +18,43 @@ ul.social-media-list {
   padding: 0;
 }
 
-ul.social-media-list li {
-  display: flex;
-  align-items: center;
-  line-height: 0;
-}
-
+ul.social-media-list li,
 ul.social-media-list a {
   display: flex;
   align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
-ul.social-media-list img,
-ul.social-media-list svg {
-  display: block;
-  height: 20px;
-  width: 20px;
+/* === Universal icon box === */
+ul.social-media-list a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  line-height: 1;
+  vertical-align: middle;
+  text-decoration: none; /* optional */
 }
+
+/* Font icons (Academicons) */
+ul.social-media-list .ai {
+  font-size: 20px;       /* visual size of the glyph */
+  line-height: 1;
+}
+
+/* Image icons (like Stanford S) */
+ul.social-media-list img {
+  display: block;
+  height: 20px;          /* actual logo size */
+  width: 14px;
+}
+
+
+
+
+// --- Styles for the publications page ---
 
 .papers-list {
   border: 2px solid red; /* test rule */
