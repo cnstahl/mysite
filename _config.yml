@@ -24,7 +24,7 @@ email: cstahl@stanford.edu
 description: >- # this means to ignore newlines until "baseurl:"
   This is a work in progress.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://cnstahl.github.io/mysite/" # the base hostname & protocol for your site, e.g. http://example.com
 # twitter_username: jekyllrb
 # github_username:  cnstahl
 scholar_id: 6CcBuF0AAAAJ
