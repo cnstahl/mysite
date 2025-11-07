@@ -1,8 +1,5 @@
-# Gemfile
 source "https://rubygems.org"
 
-# Use the same Jekyll environment GitHub Pages uses
+gem "activesupport", "< 7"
 gem "github-pages", group: :jekyll_plugins
-
-# If you’re developing locally, include this:
-gem "webrick", "~> 1.8" # Needed for Ruby 3+
+gem "webrick", "~> 1.8"
