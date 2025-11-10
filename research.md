@@ -10,4 +10,4 @@ I like classical and quantum many-body physics, and their incredible range of em
 
 <strong> Error correction-- </strong> The search for quantum error-correcting codes useful for performing fault-tolerant quantum computation has led to deep understanding of phases in condensed matter physics. While not all phases are useful for error correction, and the best fault-tolerant architecture might not come from a stable phase, ideas from both of these fields are ripe for cross pollination.
 
-<strong> Emergence-- </strong> Strongly interacting systems can have phenomena that are not obvious from their microscopic descriptions. While examples abound in physics and other sciences, the clearest illustrations to me are topological order and self-correction.
+<strong> Emergence-- </strong> Strongly interacting systems can have phenomena that are not obvious from their microscopic descriptions. While examples abound in physics and other sciences, the simplest illustrations to me are topological order and self-correction.
