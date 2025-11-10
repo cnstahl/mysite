@@ -1,6 +1,7 @@
 ---
 layout: page
 title: "Papers"
+description: "Research papers by Charles Stahl on quantum information and condensed matter physics."
 permalink: /papers/
 ---
 

@@ -1,6 +1,7 @@
 ---
 layout: page
 title: "Simulations"
+description: "Charles Stahl's simulations page."
 permalink: /simulations/
 ---
 

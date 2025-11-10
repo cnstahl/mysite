@@ -1,6 +1,7 @@
 ---
 layout: page
 title: Research
+description: "Charles Stahl's research interests in condensed matter physics and error correction."
 permalink: /research/
 ---
 
