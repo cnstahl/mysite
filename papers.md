@@ -5,7 +5,7 @@ description: "Research papers by Charles Stahl on quantum information and conden
 permalink: /papers/
 ---
 
-You can also find a list of my papers on <a href="https://arxiv.org/a/stahl_c_1.html" target="_blank">my arXiv page</a> or <a href="https://scholar.google.com/citations?hl=en&user=6CcBuF0AAAAJ" target="_blank">my google scholar page</a>. 
+You can also find a list of my papers on <a href="https://arxiv.org/a/stahl_c_1.html" target="_blank">my arXiv page</a> or <a href="https://scholar.google.com/citations?hl=en&user=6CcBuF0AAAAJ" target="_blank">my Google Scholar page</a>. 
 
 {% assign sorted_papers = site.papers | sort: "arxiv" | reverse %}
 <ul>
