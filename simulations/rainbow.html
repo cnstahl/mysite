@@ -12,7 +12,7 @@ title: "Rainbow Gauge Theory"
     $\beta H = - h \sum_{e} (\sigma_e > 0)$
     <div>
       <label>System size L = <span id="Lval">NULL</span></label>
-      <input type="range" id="Lslider" min="50" max="200" step="2">
+      <input type="range" id="Lslider" min="50" max="300" step="2">
     </div>
 
     <div>
@@ -34,9 +34,9 @@ title: "Rainbow Gauge Theory"
 </div>
 
 <p style="max-width:600px">
-Edges represent spins, with thin black lines for 0 and thick colored lines for the nontrivial states.
+Edges represent spins, with colored lines representing the nontrivial states.
 Each Monte Carlo step flips all four edges around a random plaquette,  
-accepted with probability exp(–ΔE/T).  
+accepted with the Glauber probability 1/(1+exp(ΔE/T)).  
 </p>
 
 <script src="{{ '/assets/js/rainbow.js' | relative_url }}"></script>

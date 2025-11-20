@@ -120,7 +120,7 @@ function glauber_four() {
   let tot_after  = (new_a > 0) + (new_b > 0) + (new_c > 0) + (new_d > 0);
   let dE = h * (tot_after - tot_before);
 
-  if (Math.random() < Math.exp(-dE)) {
+  if (Math.random() < 1.0/(1.0+Math.exp(dE))) {
     vert[x][y] = new_a;
     vert[(x + 1) % L][y] = new_b;
     horiz[x][y] = new_c;
@@ -154,6 +154,8 @@ document.getElementById("hslider").addEventListener("input", e => {
 
 document.getElementById("Lslider").addEventListener("input", e => {
   L = parseInt(e.target.value);
+  if (L > 100) colors[0] = "#ffffff"; // change background to white for large L
+  else colors[0] = "#000000";
   document.getElementById("Lval").textContent = L;
   initLattice();
 });

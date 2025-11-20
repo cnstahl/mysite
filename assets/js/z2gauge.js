@@ -1,5 +1,5 @@
 // --- constants ---
-const T_start = 1.5;
+const T_start = 3.0;
 const L_start = 50;
 const Speed_start = 1.0;
 
@@ -34,7 +34,7 @@ function initLattice() {
 
 function draw() {
   ctx.clearRect(0, 0, W, H);
-  ctx.strokeStyle = "#000";
+  ctx.strokeStyle = "#000000";
   for (let y = 0; y < L; y++) {
     for (let x = 0; x < L; x++) {
       // top horizontal edge
@@ -42,14 +42,14 @@ function draw() {
       ctx.beginPath();
       ctx.moveTo(x * dx, y * dy);
       ctx.lineTo((x + 1) * dx, y * dy);
-      ctx.stroke();
+      if (horiz[y][x] | L<100) ctx.stroke();
 
       // left vertical edge
       ctx.lineWidth = vert[x][y] ? 3 : 1;
       ctx.beginPath();
       ctx.moveTo(x * dx, y * dy);
       ctx.lineTo(x * dx, (y + 1) * dy);
-      ctx.stroke();
+      if (vert[x][y] | L<100) ctx.stroke();
     }
   }
 }
@@ -80,7 +80,7 @@ function step() {
     let dE = 0;
     for (const e of edges) dE += (e === 0 ? +1 : -1);
 
-    if (Math.random() < Math.exp(-dE / T)) {
+    if (Math.random() < 1.0/(1.0+Math.exp(dE / T * 2))) {
       horiz[py][px] ^= 1;
       horiz[yp][px] ^= 1;
       vert[px][py] ^= 1;
