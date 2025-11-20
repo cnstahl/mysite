@@ -47,7 +47,14 @@ header_pages:
 
 collections:
   papers:
-    output: true
+    output: false
+
+defaults:
+  - scope:
+      path: "_papers"
+    values:
+      sitemap: false
+
 
 # Exclude from processing.
 # The following items will not be processed, by default.
