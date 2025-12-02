@@ -17,4 +17,7 @@ Here are some simulations that I think are fun, and maybe even useful. There wer
   <li>
     <a href="{{ '/simulations/rainbow.html' | relative_url }}"> <strong> Rainbow loop model </strong> </a> Another classical loop model on the square lattice, but prettier.
   </li>
+  <li>
+    <a href="{{ '/simulations/cubic_rainbow.html' | relative_url }}"> <strong> Rainbow membrane model </strong> </a> A classical membrane model with membranes of different colors.
+  </li>
 </ul>
