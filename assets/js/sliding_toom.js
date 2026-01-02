@@ -75,15 +75,15 @@ function slide() {
       // if even sublattice, majority of upper spins; otherwise majority of lower spins
       if (x % 2) {
         if (y % 2) {
-          new_spins[x][y] = get_spin(x, y - 2);
+          new_spins[x][y] = get_spin(x + 2, y);
         } else {
-          new_spins[x][y] = get_spin(x - 2, y);
+          new_spins[x][y] = get_spin(x, y + 2);
         }
       } else {
         if (y % 2) {
-          new_spins[x][y] = get_spin(x, y + 2);
+          new_spins[x][y] = get_spin(x, y - 2);
         } else {
-          new_spins[x][y] = get_spin(x + 2, y);
+          new_spins[x][y] = get_spin(x - 2, y);
         }
       }
     }
