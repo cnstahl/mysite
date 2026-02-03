@@ -22,7 +22,7 @@ document.getElementById("Tslider").value = T_start;
 document.getElementById("Tval").textContent = T_start.toFixed(1);
 
 document.getElementById("Hslider").value = h_start;
-document.getElementById("Hval").textContent = h_start.toFixed(1);
+document.getElementById("Hval").textContent = h_start.toFixed(2);
 
 document.getElementById("Vslider").value = V_start;
 document.getElementById("Vval").textContent = V_start.toFixed(1);
