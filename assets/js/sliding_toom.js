@@ -192,7 +192,7 @@ document.getElementById("slideBtn").addEventListener("click", () => {
 });
 
 document.getElementById("voteBtn").addEventListener("click", () => {
-  vote();
+  vote(L*L);
   draw();
 });
 
