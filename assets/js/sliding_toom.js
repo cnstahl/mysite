@@ -87,13 +87,13 @@ function slide() {
         if (y % 2) {
           new_spins[x][y] = get_spin(x + 2, y);
         } else {
-          new_spins[x][y] = get_spin(x, y);
+          new_spins[x][y] = get_spin(x-1, y-1);
         }
       } else {
         if (y % 2) {
-          new_spins[x][y] = get_spin(x, y - 2);
+          new_spins[x][y] = get_spin(x-1, y-1);
         } else {
-          new_spins[x][y] = get_spin(x, y);
+          new_spins[x][y] = get_spin(x, y + 2);
         }
       }
     }
@@ -157,7 +157,7 @@ document.getElementById("Tslider").addEventListener("input", e => {
 
 document.getElementById("Hslider").addEventListener("input", e => {
   h = parseFloat(e.target.value);
-  document.getElementById("Hval").textContent = h.toFixed(1);
+  document.getElementById("Hval").textContent = h.toFixed(2);
 });
 
 document.getElementById("Vslider").addEventListener("input", e => {
