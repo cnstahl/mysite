@@ -1,7 +1,7 @@
 // --- constants ---
-const T_start = 1.0;
-const L_start = 50;
-const h_start = 0;
+const T_start = 0.6;
+const L_start = 150;
+const h_start = -.02;
 const V_start = 1.0;
 const speed_start = 1.0; // simulation speed
 
