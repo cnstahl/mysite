@@ -1,12 +1,10 @@
 // --- constants ---
 const h_start = 0;
-const f_start = 0;
 const L_start = 10;
 const Speed_start = 1.0;
 
 // --- mutable variables ---
 let h = h_start;
-let F = f_start;
 let L = L_start;
 let speed = Speed_start;
 let running = true;    // pause / resume toggle
@@ -15,9 +13,6 @@ let m = 3;             // number of nontrivial colors
 // --- initialize UI elements ---
 document.getElementById("hslider").value = h_start;
 document.getElementById("hval").textContent = h_start.toFixed(2);
-
-document.getElementById("fslider").value = f_start;
-document.getElementById("fval").textContent = f_start.toFixed(2);
 
 document.getElementById("Lslider").value = L_start;
 document.getElementById("Lval").textContent = L_start;
@@ -32,7 +27,7 @@ const W = canvas.width, H = canvas.height;
 let dx, dy;
 
 // color array [black, red, green, blue]
-const colors = ["#000000", "#a8003b", "#417865", "#0379ee"];
+const colors = ["#ffffff", "#a8003b", "#417865", "#0379ee"];
 
 // getters and setters for spins
 function getSpin(x, y, z, dir) {
@@ -51,7 +46,7 @@ function setSpin(x, y, z, dir, value) {
 
 // now do a 3d lattice with cubic rainbow colors
 function initLattice() {
-  spins = new Uint8Array(L * L * L * 3); // reset spins
+  spins = new Uint8Array(L * L * L * 6); // reset spins
   dx = W / L;
   dy = H / L;
 }
@@ -63,54 +58,82 @@ function initRed() {
         setSpin(x, y, z, 0, 1); // set all x-spins to red
         setSpin(x, y, z, 1, 1);
         setSpin(x, y, z, 2, 1);
+        setSpin(x, y, z, 3, 1);
+        setSpin(x, y, z, 4, 1);
+        setSpin(x, y, z, 5, 1);
       }
     }
   }
 }
 
-function draw() {
-  ctx.clearRect(0, 0, W, H);
-  ctx.strokeStyle = "#000";
-  for (let y = 0; y < L; y++) {
+function insertMemb() {
+  initLattice();
+  for (let z = 0; z < L; z++) {
     for (let x = 0; x < L; x++) {
-      // top horizontal edge
-      ctx.lineWidth = getSpin(x, y, 0, 1) ? 3 : 1;
-      ctx.strokeStyle = colors[getSpin(x, y, 0, 1)];
-      ctx.beginPath();
-      ctx.moveTo(x * dx, y * dy);
-      ctx.lineTo((x + 1) * dx, y * dy);
-      ctx.stroke();
-
-      // left vertical edge
-      ctx.lineWidth = getSpin(x, y, 0, 0) ? 3 : 1;
-      ctx.strokeStyle = colors[getSpin(x, y, 0, 0)];
-      ctx.beginPath();
-      ctx.moveTo(x * dx, y * dy);
-      ctx.lineTo(x * dx, (y + 1) * dy);
-      ctx.stroke();
+      setSpin(x, Math.floor(L/2), z, 1, 2); // set all y-spins to green in middle slice
     }
   }
 }
 
-function is_flippable(x, y, z) {
-  let i = 0;
-  let nontrivial_spins = 0;
+///////////////////////////////////////////
+//
+//               +z      
+//                2       +y
+//                |       1
+//                |     /
+//                |   /
+//                | /
+// -x 3 --------- v ----------0 +x
+//              / |
+//            /   |
+//          /     |
+//         4      |
+//      -y        5
+//                -z
+//
+/////////////////////////////////////////////
 
-  a = getSpin(x, y, z, 0);
-  b = getSpin(x + 1, y, z, 0);
-  c = getSpin(x, y, z, 1);
-  d = getSpin(x, y + 1, z, 1);
-  e = getSpin(x, y, z, 2);
-  f = getSpin(x, y, z + 1, 2);
-
-  for (const spin of [a, b, c, d, e, f]) {
-    if (spin !== 0) {
-      nontrivial_spins += 1;
-      if (i === 0) i = spin;
-      else if (spin !== i) return false;  // different nontrivial spins
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  for (let y = 0; y < L+1; y++) {
+    for (let x = 0; x < L+1; x++) {
+      // spin 0
+      ctx.fillStyle = colors[getSpin(x, y, 0, 0)];
+      ctx.beginPath();
+      ctx.moveTo(x * dx, y * dy);
+      ctx.lineTo((x+.5) * dx, (y+.5) * dy);
+      ctx.lineTo((x+.5) * dx, (y-.5) * dy);
+      ctx.closePath();
+      ctx.fill();
+      
+      // spin 1
+      ctx.fillStyle = colors[getSpin(x, y, 0, 1)];
+      ctx.beginPath();
+      ctx.moveTo(x * dx, y * dy);
+      ctx.lineTo((x+.5) * dx, (y+.5) * dy);
+      ctx.lineTo((x-.5) * dx, (y+.5) * dy);
+      ctx.closePath();
+      ctx.fill();
+      
+      // spin 3
+      ctx.fillStyle = colors[getSpin(x, y, 0, 3)];
+      ctx.beginPath();
+      ctx.moveTo(x * dx, y * dy);
+      ctx.lineTo((x-.5) * dx, (y+.5) * dy);
+      ctx.lineTo((x-.5) * dx, (y-.5) * dy);
+      ctx.closePath();
+      ctx.fill();
+      
+      // spin 4
+      ctx.fillStyle = colors[getSpin(x, y, 0, 4)];
+      ctx.beginPath();
+      ctx.moveTo(x * dx, y * dy);
+      ctx.lineTo((x+.5) * dx, (y-.5) * dy);
+      ctx.lineTo((x-.5) * dx, (y-.5) * dy);
+      ctx.closePath();
+      ctx.fill();
     }
   }
-  return true;
 }
 
 function glauber_six() {
@@ -121,11 +144,11 @@ function glauber_six() {
   let spins_before = 0;
 
   let old_a = getSpin(x, y, z, 0);
-  let old_b = getSpin(x + 1, y, z, 0);
-  let old_c = getSpin(x, y, z, 1);
-  let old_d = getSpin(x, y + 1, z, 1);
-  let old_e = getSpin(x, y, z, 2);
-  let old_f = getSpin(x, y, z + 1, 2); 
+  let old_b = getSpin(x, y, z, 1);
+  let old_c = getSpin(x, y, z, 2);
+  let old_d = getSpin(x, y, z, 3);
+  let old_e = getSpin(x, y, z, 4);
+  let old_f = getSpin(x, y, z, 5); 
   for (const spin of [old_a, old_b, old_c, old_d, old_e, old_f]) {
     if (spin !== 0) {
       spins_before += 1;
@@ -140,42 +163,63 @@ function glauber_six() {
     // i = old_a + ((old_a + Math.floor(Math.random() * (m+1))) % (m+1));  // i might be out of range but we set to i-spins, not i
   }
 
-  let flips_before = is_flippable(x+1, y, z) + is_flippable(x, y+1, z) + is_flippable(x, y, z+1) +
-                      is_flippable(x-1, y, z) + is_flippable(x, y-1, z) + is_flippable(x, y, z-1);
-
-  // tentatively set new spins
-  setSpin(x, y, z, 0, i-old_a);
-  setSpin(x + 1, y, z, 0, i-old_b);
-  setSpin(x, y, z, 1, i-old_c);
-  setSpin(x, y + 1, z, 1, i-old_d);
-  setSpin(x, y, z, 2, i-old_e);
-  setSpin(x, y, z + 1, 2, i-old_f);
-
   let spins_after = ((i-old_a) !== 0) + ((i-old_b) !== 0) + ((i-old_c) !== 0) + ((i-old_d) !== 0) + ((i-old_e) !== 0) + ((i-old_f) !== 0);
-  let flips_after = is_flippable(x+1, y, z) + is_flippable(x, y+1, z) + is_flippable(x, y, z+1) +
-                     is_flippable(x-1, y, z) + is_flippable(x, y-1, z) + is_flippable(x, y, z-1);
 
-  let dE = h * (spins_after - spins_before) + F * (flips_after - flips_before);
+  let dE = h * (spins_after - spins_before);
 
   // console.log(`a ${old_a} -> ${i-old_a}, b ${old_b} -> ${i-old_b}, c ${old_c} -> ${i-old_c}, d ${old_d} -> ${i-old_d}, e ${old_e} -> ${i-old_e}, f ${old_f} -> ${i-old_f}`);
   // console.log(`flip ${flips_before} -> ${flips_after}, spins ${spins_before} -> ${spins_after}, dE = ${dE}, prob = ${1.0/(1.0+Math.exp(dE))}`);
 
-  // revert if not accepted
-  if (Math.random() > 1.0/(1.0+Math.exp(dE))) {
-    setSpin(x, y, z, 0, old_a);
-    setSpin(x + 1, y, z, 0, old_b);
-    setSpin(x, y, z, 1, old_c);
-    setSpin(x, y + 1, z, 1, old_d);
-    setSpin(x, y, z, 2, old_e);
-    setSpin(x, y, z + 1, 2, old_f);
+  // accept with Glauber probability
+  if (Math.random() < 1.0/(1.0+Math.exp(dE))) {
+    setSpin(x, y, z, 0, i-old_a);
+    setSpin(x, y, z, 1, i-old_b);
+    setSpin(x, y, z, 2, i-old_c);
+    setSpin(x, y, z, 3, i-old_d);
+    setSpin(x, y, z, 4, i-old_e);
+    setSpin(x, y, z, 5, i-old_f);
   }
 
+}
+
+function glauber_edge() {
+  const x = Math.floor(Math.random() * L);
+  const y = Math.floor(Math.random() * L);
+  const z = Math.floor(Math.random() * L);
+  const dir = Math.floor(Math.random() * 3);
+  let i = 0;
+
+  let a = getSpin(x, y, z, dir);
+  let b = getSpin(x + (dir === 0), y + (dir === 1), z + (dir === 2), dir+3);
+
+  if ((a != b) && (a != 0) && (b != 0)) {
+    return; // different nontrivial spins
+  }
+
+  if (a == b) {
+    i = a + ((a + Math.floor(Math.random() * m) + 1) % (m+1));  // i might be out of range but we set to i-spins, not i
+  } else {
+    i = a+b; // one is zero, set both to the nonzero color
+  }
+
+  let dE = h * (((i - a) !== 0) + ((i - b) !== 0) - ((a !== 0) + (b !== 0)));
+
+  // accept with Glauber probability
+  if (Math.random() < 1.0/(1.0+Math.exp(dE))) {
+    setSpin(x, y, z, dir, i - a);
+    setSpin(x + (dir === 0), y + (dir === 1), z + (dir === 2), dir+3, i - b);
+  }
 }
 
 function step() {
   const updates = Math.floor(speed * L * L * L);
   for (let n = 0; n < updates; n++) {
-    glauber_six();
+    for (let i = 0; i < 10; i++ ) {
+      glauber_six();
+    }
+    for (let i = 0; i < 1; i++ ) {
+      glauber_edge();
+    } 
   }
 }
 
@@ -199,6 +243,9 @@ function updateLineChart() {
         spins[getSpin(x, y, z, 0)] += 1;
         spins[getSpin(x, y, z, 1)] += 1;
         spins[getSpin(x, y, z, 2)] += 1;
+        spins[getSpin(x, y, z, 3)] += 1;
+        spins[getSpin(x, y, z, 4)] += 1;
+        spins[getSpin(x, y, z, 5)] += 1;
       }
     }
   }
@@ -231,7 +278,7 @@ function drawChart() {
   const innerH = h - 2 * padding;
 
   // find max value in history for scaling
-  let maxVal = L * L * L * 3;
+  let maxVal = L * L * L * 6;
   // let maxVal = 1;
   // for (const arr of [history.red, history.green, history.blue]) {
   //   for (const v of arr) {
@@ -289,15 +336,10 @@ document.getElementById("hslider").addEventListener("input", e => {
   document.getElementById("hval").textContent = h.toFixed(2);
 });
 
-document.getElementById("fslider").addEventListener("input", e => {
-  F = parseFloat(e.target.value);
-  document.getElementById("fval").textContent = F.toFixed(2);
-});
-
 document.getElementById("Lslider").addEventListener("input", e => {
   L = parseInt(e.target.value);
-  if (L > 100) colors[0] = "#ffffff"; // change background to white for large L
-  else colors[0] = "#000000";
+  // if (L > 100) colors[0] = "#ffffff"; // change background to white for large L
+  // else colors[0] = "#000000";
   document.getElementById("Lval").textContent = L;
   initLattice();
 });
@@ -321,6 +363,12 @@ document.getElementById("resetBtn").addEventListener("click", () => {
 // all red button
 document.getElementById("allRed").addEventListener("click", () => {
   initRed();
+  draw();
+});
+
+// insert membrane button
+document.getElementById("insertMemb").addEventListener("click", () => {
+  insertMemb();
   draw();
 });
 

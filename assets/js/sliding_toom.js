@@ -1,23 +1,34 @@
 // --- constants ---
-const T_start = 3.0;
+const T_start = 1.0;
 const L_start = 50;
-const Speed_start = 1.0;
+const h_start = 0;
+const V_start = 1.0;
+const speed_start = 1.0; // simulation speed
 
 // --- mutable variables ---
-let T = T_start;
 let L = L_start;
-let speed = Speed_start;
+let T = T_start;
+let h = h_start;
+let V = V_start;
+let speed = speed_start;
 let running = true;    // pause / resume toggle
+let shift_accum = 0;
 
 // --- initialize UI elements ---
-document.getElementById("Tslider").value = T_start;
-document.getElementById("Tval").textContent = T_start.toFixed(1);
-
 document.getElementById("Lslider").value = L_start;
 document.getElementById("Lval").textContent = L_start;
 
-document.getElementById("Speedslider").value = Speed_start;
-document.getElementById("Speedval").textContent = Speed_start.toFixed(1) + "×";
+document.getElementById("Tslider").value = T_start;
+document.getElementById("Tval").textContent = T_start.toFixed(1);
+
+document.getElementById("Hslider").value = h_start;
+document.getElementById("Hval").textContent = h_start.toFixed(1);
+
+document.getElementById("Vslider").value = V_start;
+document.getElementById("Vval").textContent = V_start.toFixed(1);
+
+document.getElementById("Speedslider").value = speed_start;
+document.getElementById("Speedval").textContent = speed_start.toFixed(1) + "×";
 
 const canvas = document.getElementById("lattice");
 const ctx = canvas.getContext("2d");
@@ -72,18 +83,17 @@ function slide() {
   // shift four sublattices
   for (let y = 0; y < L; y++) {
     for (let x = 0; x < L; x++) {
-      // if even sublattice, majority of upper spins; otherwise majority of lower spins
       if (x % 2) {
         if (y % 2) {
           new_spins[x][y] = get_spin(x + 2, y);
         } else {
-          new_spins[x][y] = get_spin(x, y + 2);
+          new_spins[x][y] = get_spin(x, y);
         }
       } else {
         if (y % 2) {
           new_spins[x][y] = get_spin(x, y - 2);
         } else {
-          new_spins[x][y] = get_spin(x - 2, y);
+          new_spins[x][y] = get_spin(x, y);
         }
       }
     }
@@ -91,47 +101,68 @@ function slide() {
   spins = new_spins;
 }
 
-function vote() {
-  const updates = Math.floor(speed * L * L);
-  for (let n = 0; n < updates; n++) {
-    const x = Math.floor(Math.random() * L);;
-    const y = Math.floor(Math.random() * L);
-    // majority vote among self and four neighbors
-    const sum =
-      get_spin(x, y) +
-      get_spin(x + 1, y) +
-      get_spin(x, y + 1) +
-      get_spin(x - 1, y) +
-      get_spin(x, y - 1);
-    spins[x][y] = (sum >=3) ? 1 : 0;
-  } 
+function single_vote() {
+  const x = Math.floor(Math.random() * L);;
+  const y = Math.floor(Math.random() * L);
+  // get four neighbors
+  const sum =
+    get_spin(x + 1, y) +
+    get_spin(x, y + 1) +
+    get_spin(x - 1, y) +
+    get_spin(x, y - 1);
+
+  // Heat bath dynamics
+  const prob_up = 1 / (1 + Math.exp(-2 * (sum - 2 - h) / T));
+  // console.log(sum, prob_up);
+  if (Math.random() < prob_up) {
+    set_spin(x, y, 1);
+  } else {
+    set_spin(x, y, 0);
+  }
 }
 
-function step() {
-  slide();
-  vote();
+function vote(updates) {
+  for (let n = 0; n < updates; n++) {
+    single_vote();
+  } 
 }
 
 function loop() {
   if (running) {
-    step();
+    shift_accum += speed*V;
+    const shifts = Math.floor(shift_accum);
+    shift_accum -= shifts;
+    for (let s = 0; s < shifts; s++) {
+      slide();
+    }
+    const votes_per_frame = Math.floor(speed * L * L);
+    vote(votes_per_frame);
     draw();
-    // const e = totalEnergy();
-    // document.getElementById("Edisp").textContent = e.toFixed(3);
   }
   requestAnimationFrame(loop);
 }
 
 // UI controls
-document.getElementById("Tslider").addEventListener("input", e => {
-  T = parseFloat(e.target.value);
-  document.getElementById("Tval").textContent = T.toFixed(1);
-});
 
 document.getElementById("Lslider").addEventListener("input", e => {
   L = parseInt(e.target.value);
   document.getElementById("Lval").textContent = L;
   initLattice();
+});
+document.getElementById("Tslider").addEventListener("input", e => {
+  T = parseFloat(e.target.value);
+  if (T === 0) T = 0.00001; // prevent division by zero
+  document.getElementById("Tval").textContent = T.toFixed(1);
+});
+
+document.getElementById("Hslider").addEventListener("input", e => {
+  h = parseFloat(e.target.value);
+  document.getElementById("Hval").textContent = h.toFixed(1);
+});
+
+document.getElementById("Vslider").addEventListener("input", e => {
+  V = parseFloat(e.target.value);
+  document.getElementById("Vval").textContent = V.toFixed(1);
 });
 
 document.getElementById("Speedslider").addEventListener("input", e => {

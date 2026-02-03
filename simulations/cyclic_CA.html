@@ -1,0 +1,58 @@
+---
+layout: default
+title: "Cyclic Cellular Automata"
+---
+
+<h2>Cyclic Cellular Automata</h2>
+
+<div class="sim-container">
+  <canvas id="lattice" width="400" height="400" style="border:1px solid #aaa;"></canvas>
+
+  <div class="controls">
+    <div>
+      <label>System size L = <span id="Lval">NULL</span></label>
+      <input type="range" id="Lslider" min="50" max="300" step="2">
+    </div>
+
+    <div>
+      <label>Number of colors = <span id="Nval">NULL</span></label>
+      <input type="range" id="Nslider" min="2" max="64" step="1">
+    </div>
+
+    <div>
+      <label>Temperature = <span id="Tval">NULL</span></label>
+      <input type="range" id="Tslider" min="0" max="1.5" step="0.01">
+    </div>
+
+    <div>
+      <label>Drive rate = <span id="Driveval">NULL</span></label>
+      <input type="range" id="Driveslider" min="0" max="1" step="0.01">
+    </div>
+
+    <div>
+      <label>Simulation speed = <span id="Speedval">NULL</span></label>
+      <input type="range" id="Speedslider" min="0.1" max="5" step="0.1">
+    </div>
+
+    <div>
+        <button id="toggleBtn">⏸️ Pause</button>
+        <!-- <button id="middleBtn">Flip</button>
+        <button id="slideBtn">Slide</button>
+        <button id="voteBtn">Vote</button> -->
+      <button id="resetBtn">🔄 Reset</button>
+      <button id="randomBtn">🎲 Random</button>
+    </div>
+
+    <!-- <p>Energy per edge: <strong><span id="Edisp">0.00</span></strong></p> -->
+  </div>
+</div>
+
+<p style="max-width:600px">
+<a href="https://en.wikipedia.org/wiki/Cyclic_cellular_automaton">Cyclic cellular automaton</a> (CCA) on a 2D lattice. 
+Each cell can be in one of several states (colors), and the state of each cell updates 
+based on the states of its neighbors in a cyclic manner. The sliders allow you to
+ adjust the system size, number of colors, temperature, and drive rate.
+ Experiment with different settings to observe how the patterns evolve over time!
+</p>
+
+<script src="{{ '/assets/js/cyclic_CA.js' | relative_url }}"></script>
