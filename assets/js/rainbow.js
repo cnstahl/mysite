@@ -20,7 +20,7 @@ document.getElementById("hslider").value = h_start;
 document.getElementById("hval").textContent = h_start.toFixed(2);
 
 document.getElementById("pslider").value = p_start;
-document.getElementById("pval").textContent = p_start.toFixed(1);
+document.getElementById("pval").textContent = p_start.toFixed(2);
 
 document.getElementById("Speedslider").value = Speed_start;
 document.getElementById("Speedval").textContent = Speed_start.toFixed(1) + "×";
@@ -240,7 +240,7 @@ document.getElementById("hslider").addEventListener("input", e => {
 
 document.getElementById("pslider").addEventListener("input", e => {
   p = parseFloat(e.target.value);
-  document.getElementById("pval").textContent = p.toFixed(1);
+  document.getElementById("pval").textContent = p.toFixed(2);
 });
 
 document.getElementById("Speedslider").addEventListener("input", e => {
