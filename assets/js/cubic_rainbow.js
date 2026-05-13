@@ -1,16 +1,46 @@
 // --- constants ---
 const h_start = 0;
 const f_start = 0;
-const L_start = 10;
+const L_start = 32;
+const T_start = 0;
 const Speed_start = 1.0;
 
 // --- mutable variables ---
 let h = h_start;
 let F = f_start;
+let T = T_start;
 let L = L_start;
 let speed = Speed_start;
 let running = true;    // pause / resume toggle
 let m = 3;             // number of nontrivial colors
+let n_membs = 0;
+
+// (m+1)x(m+1)x(m+1)x(m+1) table, 1 if the face is not allowed
+// initially fill with zeros, then set to one if there is an odd number of any nontrivial color
+let face_table = new Uint8Array((m+1) * (m+1) * (m+1) * (m+1));
+for (let a = 0; a <= m; a++) {
+  for (let b = 0; b <= m; b++) {
+    for (let c = 0; c <= m; c++) {
+      for (let d = 0; d <= m; d++) {
+        // set to one if there is an odd number of any nontrivial color
+        let counts = new Array(m+1).fill(0);
+        counts[a] += 1;
+        counts[b] += 1;
+        counts[c] += 1;
+        counts[d] += 1;
+        if ((counts[1] % 2 === 1) || (counts[2] % 2 === 1) || (counts[3] % 2 === 1)) {
+          face_table[a * (m+1) * (m+1) * (m+1) + b * (m+1) * (m+1) + c * (m+1) + d] = 
+                ((counts[1] % 2 === 1) + (counts[2] % 2 === 1) + (counts[3] % 2 === 1));
+          continue;
+        }
+        // set to one if a>0, b>0, a!=b, and c!=b
+        if (a > 0 && b > 0 && a != b && c != b) {
+          face_table[a * (m+1) * (m+1) * (m+1) + b * (m+1) * (m+1) + c * (m+1) + d] = 1;
+        }
+      }
+    }
+  }
+}
 
 // --- initialize UI elements ---
 document.getElementById("hslider").value = h_start;
@@ -18,6 +48,9 @@ document.getElementById("hval").textContent = h_start.toFixed(2);
 
 document.getElementById("fslider").value = f_start;
 document.getElementById("fval").textContent = f_start.toFixed(2);
+
+document.getElementById("Tslider").value = T_start;
+document.getElementById("Tval").textContent = T_start.toFixed(2);
 
 document.getElementById("Lslider").value = L_start;
 document.getElementById("Lval").textContent = L_start;
@@ -68,6 +101,20 @@ function initRed() {
   }
 }
 
+function insertMembrane() {
+  initLattice();
+  let color = 0;
+  for (let j = 0; j < n_membs; j++) {
+    const y = j+5;
+    color = (color + Math.floor(Math.random() * (m-1) + 1)) % m; // random nontrivial color
+    for (let z = 0; z < L; z++) {
+      for (let x = 0; x < L; x++) {
+        setSpin(x, y, z, 1, color+1);
+      }
+    }
+  }
+}
+
 function draw() {
   ctx.clearRect(0, 0, W, H);
   ctx.strokeStyle = "#000";
@@ -78,7 +125,7 @@ function draw() {
       ctx.strokeStyle = colors[getSpin(x, y, 0, 1)];
       ctx.beginPath();
       ctx.moveTo(x * dx, y * dy);
-      ctx.lineTo((x + 1) * dx, y * dy);
+      ctx.lineTo((x - 1) * dx, y * dy);
       ctx.stroke();
 
       // left vertical edge
@@ -86,7 +133,7 @@ function draw() {
       ctx.strokeStyle = colors[getSpin(x, y, 0, 0)];
       ctx.beginPath();
       ctx.moveTo(x * dx, y * dy);
-      ctx.lineTo(x * dx, (y + 1) * dy);
+      ctx.lineTo(x * dx, (y - 1) * dy);
       ctx.stroke();
     }
   }
@@ -97,11 +144,11 @@ function is_flippable(x, y, z) {
   let nontrivial_spins = 0;
 
   a = getSpin(x, y, z, 0);
-  b = getSpin(x + 1, y, z, 0);
+  b = getSpin(x - 1, y, z, 0);
   c = getSpin(x, y, z, 1);
-  d = getSpin(x, y + 1, z, 1);
+  d = getSpin(x, y - 1, z, 1);
   e = getSpin(x, y, z, 2);
-  f = getSpin(x, y, z + 1, 2);
+  f = getSpin(x, y, z - 1, 2);
 
   for (const spin of [a, b, c, d, e, f]) {
     if (spin !== 0) {
@@ -113,6 +160,39 @@ function is_flippable(x, y, z) {
   return true;
 }
 
+function is_aligned(x, y, z) {
+  min_triv = 1;
+  a = getSpin(x, y, z, 0);
+  b = getSpin(x - 1, y, z, 0);
+  c = getSpin(x, y, z, 1);
+  d = getSpin(x, y - 1, z, 1);
+  e = getSpin(x, y, z, 2);
+  f = getSpin(x, y, z - 1, 2);
+  // if (a != 0 && a != b && b != 0 && c == 0 && d == 0 && e == 0 && f == 0) return true;
+  // if (c != 0 && c != d && d != 0 && a == 0 && b == 0 && e == 0 && f == 0) return true;
+  // if (e != 0 && e != f && f != 0 && a == 0 && b == 0 && c == 0 && d == 0) return true;
+  if (a !== 0 && a !== b && b !== 0 && (((c === 0) + (d === 0) + (e === 0) + (f === 0)) > min_triv)) return true;
+  if (c !== 0 && c !== d && d !== 0 && (((a === 0) + (b === 0) + (e === 0) + (f === 0)) > min_triv)) return true;
+  if (e !== 0 && e !== f && f !== 0 && (((a === 0) + (b === 0) + (c === 0) + (d === 0)) > min_triv)) return true;
+  return false;
+}
+
+function cube_term(x, y, z) {
+  return !is_aligned(x, y, z);
+}
+
+function total_cube() {
+  let total = 0;
+  for (let z = 0; z < L; z++) {
+    for (let y = 0; y < L; y++) {
+      for (let x = 0; x < L; x++) {
+        total += cube_term(x, y, z);
+      }
+    }
+  }
+  return total;
+}
+
 function glauber_six() {
   const x = Math.floor(Math.random() * L);
   const y = Math.floor(Math.random() * L);
@@ -121,11 +201,11 @@ function glauber_six() {
   let spins_before = 0;
 
   let old_a = getSpin(x, y, z, 0);
-  let old_b = getSpin(x + 1, y, z, 0);
+  let old_b = getSpin(x - 1, y, z, 0);
   let old_c = getSpin(x, y, z, 1);
-  let old_d = getSpin(x, y + 1, z, 1);
+  let old_d = getSpin(x, y - 1, z, 1);
   let old_e = getSpin(x, y, z, 2);
-  let old_f = getSpin(x, y, z + 1, 2); 
+  let old_f = getSpin(x, y, z - 1, 2); 
   for (const spin of [old_a, old_b, old_c, old_d, old_e, old_f]) {
     if (spin !== 0) {
       spins_before += 1;
@@ -140,22 +220,22 @@ function glauber_six() {
     // i = old_a + ((old_a + Math.floor(Math.random() * (m+1))) % (m+1));  // i might be out of range but we set to i-spins, not i
   }
 
-  let flips_before = is_flippable(x+1, y, z) + is_flippable(x, y+1, z) + is_flippable(x, y, z+1) +
-                      is_flippable(x-1, y, z) + is_flippable(x, y-1, z) + is_flippable(x, y, z-1);
+  let cubes_before = cube_term(x+1, y, z) + cube_term(x, y+1, z) + cube_term(x, y, z+1) +
+                      cube_term(x-1, y, z) + cube_term(x, y-1, z) + cube_term(x, y, z-1);
 
   // tentatively set new spins
   setSpin(x, y, z, 0, i-old_a);
-  setSpin(x + 1, y, z, 0, i-old_b);
+  setSpin(x - 1, y, z, 0, i-old_b);
   setSpin(x, y, z, 1, i-old_c);
-  setSpin(x, y + 1, z, 1, i-old_d);
+  setSpin(x, y - 1, z, 1, i-old_d);
   setSpin(x, y, z, 2, i-old_e);
-  setSpin(x, y, z + 1, 2, i-old_f);
+  setSpin(x, y, z - 1, 2, i-old_f);
 
   let spins_after = ((i-old_a) !== 0) + ((i-old_b) !== 0) + ((i-old_c) !== 0) + ((i-old_d) !== 0) + ((i-old_e) !== 0) + ((i-old_f) !== 0);
-  let flips_after = is_flippable(x+1, y, z) + is_flippable(x, y+1, z) + is_flippable(x, y, z+1) +
-                     is_flippable(x-1, y, z) + is_flippable(x, y-1, z) + is_flippable(x, y, z-1);
+  let cubes_after = cube_term(x+1, y, z) + cube_term(x, y+1, z) + cube_term(x, y, z+1) +
+                     cube_term(x-1, y, z) + cube_term(x, y-1, z) + cube_term(x, y, z-1);
 
-  let dE = h * (spins_after - spins_before) + F * (flips_after - flips_before);
+  let dE = h * (spins_after - spins_before) + F * (cubes_after - cubes_before);
 
   // console.log(`a ${old_a} -> ${i-old_a}, b ${old_b} -> ${i-old_b}, c ${old_c} -> ${i-old_c}, d ${old_d} -> ${i-old_d}, e ${old_e} -> ${i-old_e}, f ${old_f} -> ${i-old_f}`);
   // console.log(`flip ${flips_before} -> ${flips_after}, spins ${spins_before} -> ${spins_after}, dE = ${dE}, prob = ${1.0/(1.0+Math.exp(dE))}`);
@@ -163,19 +243,148 @@ function glauber_six() {
   // revert if not accepted
   if (Math.random() > 1.0/(1.0+Math.exp(dE))) {
     setSpin(x, y, z, 0, old_a);
-    setSpin(x + 1, y, z, 0, old_b);
+    setSpin(x - 1, y, z, 0, old_b);
     setSpin(x, y, z, 1, old_c);
-    setSpin(x, y + 1, z, 1, old_d);
+    setSpin(x, y - 1, z, 1, old_d);
     setSpin(x, y, z, 2, old_e);
-    setSpin(x, y, z + 1, 2, old_f);
+    setSpin(x, y, z - 1, 2, old_f);
   }
 
+}
+
+function flux_xy_face(x, y, z) {
+  const a = getSpin(x,   y,   z, 0);
+  const b = getSpin(x+1, y,   z, 1);
+  const c = getSpin(x,   y+1, z, 0);
+  const d = getSpin(x,   y,   z, 1);
+  return face_table[a * (m+1) * (m+1) * (m+1) + b * (m+1) * (m+1) + c * (m+1) + d];
+}
+
+function print_xy_face(x, y, z) {
+  const a = getSpin(x,   y,   z, 0);
+  const b = getSpin(x+1, y,   z, 1);
+  const c = getSpin(x,   y+1, z, 0);
+  const d = getSpin(x,   y,   z, 1);
+  console.log(`xy face at (${x}, ${y}, ${z}): a=${a}, b=${b}, c=${c}, d=${d}, flux=${face_table[a * (m+1) * (m+1) * (m+1) + b * (m+1) * (m+1) + c * (m+1) + d]}`);
+}
+
+function flux_yz_face(x, y, z) {
+  const a = getSpin(x, y  , z,   1);
+  const b = getSpin(x, y+1, z  , 2);
+  const c = getSpin(x, y  , z+1, 1);
+  const d = getSpin(x, y,   z  , 2);
+  return face_table[a * (m+1) * (m+1) * (m+1) + b * (m+1) * (m+1) + c * (m+1) + d];
+}
+
+function print_yz_face(x, y, z) {
+  const a = getSpin(x, y  , z,   1);
+  const b = getSpin(x, y+1, z  , 2);
+  const c = getSpin(x, y  , z+1, 1);
+  const d = getSpin(x, y,   z  , 2);
+  console.log(`yz face at (${x}, ${y}, ${z}): a=${a}, b=${b}, c=${c}, d=${d}, flux=${face_table[a * (m+1) * (m+1) * (m+1) + b * (m+1) * (m+1) + c * (m+1) + d]}`);
+}
+
+function flux_xz_face(x, y, z) {
+  const a = getSpin(x  , y, z,   0);
+  const b = getSpin(x+1, y, z  , 2);
+  const c = getSpin(x  , y, z+1, 0);
+  const d = getSpin(x,   y, z  , 2);
+  return face_table[a * (m+1) * (m+1) * (m+1) + b * (m+1) * (m+1) + c * (m+1) + d];
+}
+
+function print_xz_face(x, y, z) {
+  const a = getSpin(x  , y, z,   0);
+  const b = getSpin(x+1, y, z  , 2);
+  const c = getSpin(x  , y, z+1, 0);
+  const d = getSpin(x,   y, z  , 2);
+  console.log(`xz face at (${x}, ${y}, ${z}): a=${a}, b=${b}, c=${c}, d=${d}, flux=${face_table[a * (m+1) * (m+1) * (m+1) + b * (m+1) * (m+1) + c * (m+1) + d]}`);
+}
+
+function totalFlux() {
+  let total = 0;
+  for (let z = 0; z < L; z++) {
+    for (let y = 0; y < L; y++) {
+      for (let x = 0; x < L; x++) {
+        total += flux_xy_face(x, y, z) + flux_yz_face(x, y, z) + flux_xz_face(x, y, z);
+      }
+    }
+  }
+  return total;
+}
+
+function energy_at_edge(x, y, z, dir) {
+  let energy = h * (getSpin(x, y, z, dir) === 0 ? 0 : 1);
+  if (dir == 0) {
+    energy += (flux_xy_face(x, y, z) + flux_xy_face(x, y-1, z) + flux_xz_face(x, y, z) + flux_xz_face(x, y, z-1)) / T;
+    energy += F * (cube_term(x, y, z) + cube_term(x+1, y, z));
+  } else if (dir == 1) {
+    energy += (flux_xy_face(x, y, z) + flux_xy_face(x-1, y, z) + flux_yz_face(x, y, z) + flux_yz_face(x, y, z-1)) / T;
+    energy += F * (cube_term(x, y, z) + cube_term(x, y+1, z));
+  } else if (dir == 2) {
+    energy += (flux_xz_face(x, y, z) + flux_xz_face(x-1, y, z) + flux_yz_face(x, y, z) + flux_yz_face(x, y-1, z)) / T;
+    energy += F * (cube_term(x, y, z) + cube_term(x, y, z+1));
+  }
+  return energy;
+}
+
+function print_faces(x, y, z, dir) {
+  if (dir == 0) {
+    print_xy_face(x, y, z);
+    print_xy_face(x, y-1, z);
+    print_xz_face(x, y, z);
+    print_xz_face(x, y, z-1);
+  } else if (dir == 1) {
+    print_xy_face(x, y, z);
+    print_xy_face(x-1, y, z);
+    print_yz_face(x, y, z);
+    print_yz_face(x, y, z-1);
+  } else if (dir == 2) {
+    print_xz_face(x, y, z);
+    print_xz_face(x-1, y, z);
+    print_yz_face(x, y, z);
+    print_yz_face(x, y-1, z);
+  }
+}
+
+function glauber_single() {
+  const x = Math.floor(Math.random() * L);
+  const y = Math.floor(Math.random() * L);
+  const z = Math.floor(Math.random() * L);
+  const dir = Math.floor(Math.random() * 3);
+  const old_spin = getSpin(x, y, z, dir);
+  const new_spin = (old_spin + Math.floor(Math.random() * m) + 1) % (m+1);
+
+  const old_energy = energy_at_edge(x, y, z, dir);
+  setSpin(x, y, z, dir, new_spin);
+  const new_energy = energy_at_edge(x, y, z, dir);
+
+  const dE = new_energy - old_energy;
+
+  // {
+  //   console.log(`proposed flip at (${x}, ${y}, ${z}), dir ${dir}`);
+  //   console.log(`update ${old_spin} -> ${new_spin}: old energy: ${old_energy}, new energy: ${new_energy}, dE = ${dE}, prob = ${1.0/(1.0+Math.exp(dE))}`);
+  //   print_faces(x, y, z, dir);
+  //   console.log(`new total flux: ${totalFlux()}`);
+  // }
+
+  if (Math.random() > 1.0/(1.0+Math.exp(dE))) {
+    setSpin(x, y, z, dir, old_spin); // revert
+  }
+}
+
+function micro_step() {
+  glauber_six();
+  if (T > 0) {
+    for (let i = 0; i < 3; i++) {
+      glauber_single();
+    }
+  }
 }
 
 function step() {
   const updates = Math.floor(speed * L * L * L);
   for (let n = 0; n < updates; n++) {
-    glauber_six();
+    micro_step();
   }
 }
 
@@ -187,7 +396,8 @@ const maxPoints = 100;  // how many time steps to show
 const history = {
   red:   [],
   green: [],
-  blue:  []
+  blue:  [],
+  flip: []
 };
 
 function updateLineChart() {
@@ -210,11 +420,13 @@ function updateLineChart() {
   history.red.push(spins[1]);
   history.green.push(spins[2]);
   history.blue.push(spins[3]);
+  history.flip.push(total_cube());
   // trim to maxPoints
   if (history.red.length > maxPoints) {
     history.red.shift();
     history.green.shift();
     history.blue.shift();
+    history.flip.shift();
   }
 
   drawChart();
@@ -269,6 +481,7 @@ function drawChart() {
   drawSeries(history.red,   colors[1]);
   drawSeries(history.green, colors[2]);
   drawSeries(history.blue,  colors[3]);
+  drawSeries(history.flip,  "#888888"); // grey for flux
 }
 
 
@@ -294,6 +507,11 @@ document.getElementById("fslider").addEventListener("input", e => {
   document.getElementById("fval").textContent = F.toFixed(2);
 });
 
+document.getElementById("Tslider").addEventListener("input", e => {
+  T = parseFloat(e.target.value);
+  document.getElementById("Tval").textContent = T.toFixed(2);
+});
+
 document.getElementById("Lslider").addEventListener("input", e => {
   L = parseInt(e.target.value);
   if (L > 100) colors[0] = "#ffffff"; // change background to white for large L
@@ -314,6 +532,7 @@ document.getElementById("toggleBtn").addEventListener("click", () => {
 
 // reset button
 document.getElementById("resetBtn").addEventListener("click", () => {
+  n_membs = 0;
   initLattice();
   draw();
 });
@@ -321,6 +540,21 @@ document.getElementById("resetBtn").addEventListener("click", () => {
 // all red button
 document.getElementById("allRed").addEventListener("click", () => {
   initRed();
+  draw();
+});
+
+// insert random membrane button
+document.getElementById("insertMemb").addEventListener("click", () => {
+  n_membs += 1;
+  insertMembrane();
+  draw();
+});
+
+// single step button
+document.getElementById("singleStep").addEventListener("click", () => {
+  for (let i = 0; i < 100; i++) {
+    micro_step();
+  }
   draw();
 });
 

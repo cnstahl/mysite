@@ -11,6 +11,7 @@ let p = p_start;
 let speed = Speed_start;
 let running = true;    // pause / resume toggle
 let m = 3;             // number of nontrivial colors
+let counter = 0;
 
 // --- initialize UI elements ---
 document.getElementById("Lslider").value = L_start;
@@ -139,7 +140,17 @@ function face_lookup(x, y) {
   let spin_b = get_spin(x+1, y, 1);
   let spin_c = get_spin(x, y+1, 0);
   let spin_d = get_spin(x, y, 1);
-  return face_table[spin_a][spin_b][spin_c][spin_d];
+  return face_table[spin_a][spin_b][spin_c][spin_d];  
+}
+
+function total_alignment() {
+  let total = 3;
+  for (let x = 0; x < L; x++) {
+    for (let y = 0; y < L; y++) {
+      total += face_lookup(x, y);
+    }
+  }
+  return total;
 }
 
 function vertex_lookup(x, y) {
@@ -196,6 +207,7 @@ function glauber_four() {
   // tot_p_after += vertex_lookup(x, y) + vertex_lookup(x+1, y) + vertex_lookup(x, y+1) + vertex_lookup(x+1, y+1);
 
   let dE = h * (tot_h_after - tot_h_before) + p * (tot_p_before - tot_p_after);
+  // console.log("(" + String(old_a) + String(old_b) + String(old_c) + String(old_d) + ") -> (" + String(new_a) + String(new_b) + String(new_c) + String(new_d) + ")" , x, y, dE, 1.0/(1.0+Math.exp(dE)))
 
   if (Math.random() > 1.0/(1.0+Math.exp(dE))) {
     // reject the flip, restore old spins
@@ -212,6 +224,8 @@ function step() {
   for (let n = 0; n < updates; n++) {
     glauber_four();
   }
+
+  // console.log("step " + String(counter++), "alignment", total_alignment());
 }
 
 function loop() {
@@ -254,6 +268,7 @@ document.getElementById("toggleBtn").addEventListener("click", () => {
 });
 
 document.getElementById("resetBtn").addEventListener("click", () => {
+  counter = 0;
   initLattice();
   draw();
 });
