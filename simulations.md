@@ -24,6 +24,9 @@ Here are some simulations that I think are fun, and maybe even useful. There wer
     <a href="{{ '/simulations/octic_rainbow.html' | relative_url }}"> <strong> Rainbow membrane model (octic) </strong> </a> Another classical rainbow membrane model, on a different lattice.
   </li> -->
   <li>
+    <a href="{{ '/simulations/cyclic_CA.html' | relative_url }}"> <strong> Cyclic CA </strong> </a> An attempt at a cyclic CA that has some sort of non-equilibrium order.
+  </li>
+  <li>
     <a href="{{ '/simulations/sliding_toom.html' | relative_url }}"> <strong> Sliding Toom's Rule </strong> </a> Realizing Toom's rule via sliding Ising layers.
   </li>
 </ul>
