@@ -22,7 +22,7 @@ title: Charles Stahl, Physics
 author: Charles Stahl
 email: cstahl@stanford.edu
 description: >- # this means to ignore newlines until "baseurl:"
-  Check back for occasional updates!
+  Robust emergent phenomena
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://charlesstahl.com" # the base hostname & protocol for your site, e.g. http://example.com
 # twitter_username: jekyllrb
