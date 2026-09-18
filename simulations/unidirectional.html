@@ -1,9 +1,12 @@
 ---
 layout: default
-title: "Sliding Toom's rule"
+title: "Unidirectional Sliding (Synchronous)"
+blurb: "Two majority-vote copies sliding apart in opposite directions, updated in parallel."
+visibility: hidden
+order: 190
 ---
 
-<h2>Sliding Toom's rule</h2>
+<h2>Unidirectional Sliding (Synchronous)</h2>
 
 <div class="sim-container">
   <canvas id="lattice" width="400" height="400" style="border:1px solid #aaa;"></canvas>
@@ -11,7 +14,7 @@ title: "Sliding Toom's rule"
   <div class="controls">
     <div>
       <label>System size L = <span id="Lval">NULL</span></label>
-      <input type="range" id="Lslider" min="48" max="300" step="6">
+      <input type="range" id="Lslider" min="50" max="300" step="2">
     </div>
 
     <div>
@@ -34,11 +37,6 @@ title: "Sliding Toom's rule"
       <input type="range" id="Speedslider" min="0.1" max="5" step="0.1">
     </div>
 
-    <!-- <div>
-      <label>Simulation speed = <span id="Speedval">NULL</span></label>
-      <input type="range" id="Speedslider" min="0.1" max="5" step="0.1">
-    </div> -->
-
     <div>
         <button id="toggleBtn">⏸️ Pause</button>
         <button id="middleBtn">Flip</button>
@@ -49,13 +47,16 @@ title: "Sliding Toom's rule"
     <div>
       <button id="resetBtn">🔄 Reset</button>
     </div>
-
-    <!-- <p>Energy per edge: <strong><span id="Edisp">0.00</span></strong></p> -->
   </div>
 </div>
 
 <p style="max-width:600px">
-Generating erosion from translations and symmetric majority votes.
+Two independent copies of the same majority-vote heat-bath dynamics, sliding in opposite
+directions: one layer drifts right, the other drifts left, both at velocity V. White = both
+layers agree on 0, black = both agree on 1, grey = the layers disagree. <br><br>
+
+Each vote step is synchronous: every spin is updated in parallel from a single snapshot
+of the old lattice.
 </p>
 
-<script src="{{ '/assets/js/sliding_toom.js' | relative_url }}"></script>
+<script src="{{ '/assets/js/unidirectional.js' | relative_url }}"></script>

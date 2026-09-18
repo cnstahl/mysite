@@ -1,5 +1,5 @@
 // --- constants ---
-const L_start = 50;
+const L_start = 200;
 const N_start = 5;  // number of colors
 const T_start = 1;  // synchronicity factor
 const V_start = 0.1;  // drive rate
@@ -56,6 +56,19 @@ function randomizeLattice() {
   for (let y = 0; y < L; y++) {
     for (let x = 0; x < L; x++) {
       spins[x][y] = Math.floor(Math.random() * N);
+    }
+  }
+}
+
+// ordered background containing a well-separated vortex / antivortex pair
+function vortexLattice() {
+  const x1 = 0.25 * L + 0.5, y1 = 0.5 * L + 0.5;   // +1 winding
+  const x2 = 0.75 * L + 0.5, y2 = 0.5 * L + 0.5;   // -1 winding
+  for (let y = 0; y < L; y++) {
+    for (let x = 0; x < L; x++) {
+      const theta = Math.atan2(y - y1, x - x1) - Math.atan2(y - y2, x - x2);
+      const n = Math.round((theta / (2 * Math.PI)) * N);
+      spins[x][y] = ((n % N) + N) % N;
     }
   }
 }
@@ -219,6 +232,12 @@ document.getElementById("resetBtn").addEventListener("click", () => {
 
 document.getElementById("randomBtn").addEventListener("click", () => {
   randomizeLattice();
+  draw();
+});
+
+document.getElementById("vortexBtn").addEventListener("click", () => {
+  initLattice();
+  vortexLattice();
   draw();
 });
 

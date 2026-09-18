@@ -1,12 +1,12 @@
 ---
 layout: default
-title: "Z₂ Gauge Theory"
-blurb: "A classical loop model on the square lattice."
-visibility: visible
-order: 10
+title: "Ising Model"
+blurb: "The classical 2D Ising model, simulated directly in terms of its spins."
+visibility: hidden
+order: 100
 ---
 
-<h2>Z₂ Lattice Gauge Theory (Ising Model)</h2>
+<h2>Ising Model (spins)</h2>
 
 <div class="sim-container">
   <canvas id="lattice" width="400" height="400" style="border:1px solid #aaa;"></canvas>
@@ -36,12 +36,12 @@ order: 10
 </div>
 
 <p style="max-width:600px">
-Edges represent Z₂ spins (thin = 0, thick = 1).  
-Each Monte Carlo step flips all four edges around a random plaquette,  
-accepted with probability 1/(1+exp(ΔE/T)).  <br><br>
+Each square is a spin (black = up, white = down).
+Each Monte Carlo step attempts a single-spin flip, chosen uniformly at random,
+accepted with probability min(1, exp(-ΔE/T)) under Glauber/Metropolis dynamics.  <br><br>
 
-The critical temperture is 2.27. Try quenching above and below this 
+The critical temperture is 2.27. Try quenching above and below this
 temperature to see the different phases!
 </p>
 
-<script src="{{ '/assets/js/z2gauge.js' | relative_url }}"></script>
+<script src="{{ '/assets/js/ising.js' | relative_url }}"></script>

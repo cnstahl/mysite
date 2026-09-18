@@ -1,12 +1,12 @@
 ---
 layout: default
-title: "Z₂ Gauge Theory"
-blurb: "A classical loop model on the square lattice."
-visibility: visible
-order: 10
+title: "Bidirectional Majority Vote"
+blurb: "Alternates vertical and horizontal majority-vote half-steps."
+visibility: hidden
+order: 110
 ---
 
-<h2>Z₂ Lattice Gauge Theory (Ising Model)</h2>
+<h2>Bidirectional Majority Vote</h2>
 
 <div class="sim-container">
   <canvas id="lattice" width="400" height="400" style="border:1px solid #aaa;"></canvas>
@@ -36,12 +36,15 @@ order: 10
 </div>
 
 <p style="max-width:600px">
-Edges represent Z₂ spins (thin = 0, thick = 1).  
-Each Monte Carlo step flips all four edges around a random plaquette,  
-accepted with probability 1/(1+exp(ΔE/T)).  <br><br>
+Each square is a spin (black = up, white = down). Each Monte Carlo step is
+two synchronous half-steps: first every spin takes the majority vote of
+itself and its vertical (up/down) neighbors, then every spin takes the
+majority vote of itself and its horizontal (left/right) neighbors.  <br><br>
 
-The critical temperture is 2.27. Try quenching above and below this 
-temperature to see the different phases!
+Temperature adds noise: after each half-step, every spin's new value is
+flipped with a probability that grows with T, so the majority vote is exact
+at T→0 and washes out to a coin flip as T grows. Try quenching above and
+below to see the different phases!
 </p>
 
-<script src="{{ '/assets/js/z2gauge.js' | relative_url }}"></script>
+<script src="{{ '/assets/js/bidirectional.js' | relative_url }}"></script>

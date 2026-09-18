@@ -1,0 +1,12 @@
+{%- comment -%}
+Lists simulation pages whose front matter has visibility: {{ include.visibility }}.
+Each sim page in simulations/ sets title, blurb, visibility and order.
+{%- endcomment -%}
+{%- assign sims = site.pages | where: "visibility", include.visibility | sort: "order" -%}
+<ul>
+  {%- for sim in sims %}
+  <li>
+    <a href="{{ sim.url | relative_url }}"> <strong> {{ sim.title }} </strong> </a> {{ sim.blurb }}
+  </li>
+  {%- endfor %}
+</ul>

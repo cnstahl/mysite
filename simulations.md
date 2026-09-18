@@ -10,23 +10,4 @@ Here are some simulations that I think are fun, and maybe even useful. There wer
 <a href="https://kjslag.github.io/XY/" target="_blank"> XY model</a>.
 
 
-<ul>
-  <li>
-    <a href="{{ '/simulations/z2.html' | relative_url }}"> <strong> Z₂ Gauge Theory </strong> </a> A classical loop model on the square lattice. 
-  </li>
-  <li>
-    <a href="{{ '/simulations/rainbow.html' | relative_url }}"> <strong> Rainbow loop model </strong> </a> Another classical loop model on the square lattice, but prettier.
-  </li>
-  <li>
-    <a href="{{ '/simulations/cubic_rainbow.html' | relative_url }}"> <strong> Rainbow membrane model </strong> </a> A classical membrane model with membranes of different colors.
-  </li>
-  <!-- <li>
-    <a href="{{ '/simulations/octic_rainbow.html' | relative_url }}"> <strong> Rainbow membrane model (octic) </strong> </a> Another classical rainbow membrane model, on a different lattice.
-  </li> -->
-  <li>
-    <a href="{{ '/simulations/cyclic_CA.html' | relative_url }}"> <strong> Cyclic CA </strong> </a> An attempt at a cyclic CA that has some sort of non-equilibrium order.
-  </li>
-  <li>
-    <a href="{{ '/simulations/sliding_toom.html' | relative_url }}"> <strong> Sliding Toom's Rule </strong> </a> Realizing Toom's rule via sliding Ising layers.
-  </li>
-</ul>
+{% include sim_list.html visibility="visible" %}

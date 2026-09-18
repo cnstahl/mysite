@@ -1,0 +1,64 @@
+---
+layout: default
+title: "Rainbow loop model (honeycomb)"
+blurb: "The same rainbow loop model on the honeycomb lattice, where loops can never cross."
+visibility: hidden
+order: 150
+---
+
+<h2>Rainbow Gauge Theory (Honeycomb Loop Model)</h2>
+
+<div class="sim-container">
+  <canvas id="lattice" width="400" height="346" style="border:1px solid #aaa;"></canvas>
+
+  <div class="controls">
+    $\beta H = - h \sum_{e} (\sigma_e > 0)$
+    <div>
+      <label>System size L = <span id="Lval">NULL</span></label>
+      <input type="range" id="Lslider" min="50" max="300" step="2">
+    </div>
+
+    <div>
+      <label>Tension h = <span id="hval">NULLY</span></label>
+      <input type="range" id="hslider" min="-1" max="2" step="0.02">
+    </div>
+
+    <div>
+      <label>Alignment p = <span id="pval">NULLY</span></label>
+      <input type="range" id="pslider" min="-1" max="2" step="0.01">
+    </div>
+
+    <div>
+      <label>Flippability f = <span id="fval">NULLY</span></label>
+      <input type="range" id="fslider" min="-2" max="2" step="0.02">
+    </div>
+
+    <div>
+      <label>Speed = <span id="Speedval">NULL</span></label>
+      <input type="range" id="Speedslider" min="0.1" max="5" step="0.1">
+    </div>
+
+    <div>
+        <button id="toggleBtn">⏸️ Pause</button>
+        <button id="resetBtn">🔄 Reset</button>
+        <button id="insertLine">➕ Insert Line</button>
+    </div>
+  </div>
+</div>
+
+<p style="max-width:600px">
+Edges represent spins, with colored lines representing the nontrivial states.
+Each Monte Carlo step flips all six edges around a random hexagon,
+accepted with the Glauber probability 1/(1+exp(ΔE/T)).
+Because every vertex of the honeycomb has only three bonds, each color must appear
+zero or two times there, so loops of different colors can never cross.
+</p>
+
+<p style="max-width:600px">
+A hexagon is <em>flippable</em> when at most one nontrivial color appears on its six
+edges — only those hexagons admit a legal move. Positive flippability f rewards
+configurations with many flippable hexagons, keeping the dynamics loose; negative f
+rewards jammed configurations where most hexagons are blocked by two colors meeting.
+</p>
+
+<script src="{{ '/assets/js/honeycomb_rainbow.js' | relative_url }}"></script>

@@ -1,6 +1,7 @@
 // --- constants ---
 const L_start = 100;
 const T_start = 1.0;
+const J_start = 1.0;
 const K_start = 0.0;
 const h_start = 0.0;
 const Speed_start = 1.0;
@@ -8,6 +9,7 @@ const Speed_start = 1.0;
 // --- mutable variables ---
 let L = L_start;
 let T = T_start;
+let J = J_start;
 let K = K_start;
 let h = h_start;
 let speed = Speed_start;
@@ -19,6 +21,9 @@ document.getElementById("Lval").textContent = L_start;
 
 document.getElementById("Tslider").value = T_start;
 document.getElementById("Tval").textContent = T_start.toFixed(1);
+
+document.getElementById("Jslider").value = J_start;
+document.getElementById("Jval").textContent = J_start.toFixed(2);
 
 document.getElementById("Kslider").value = K_start;
 document.getElementById("Kval").textContent = K_start.toFixed(1);
@@ -45,7 +50,8 @@ function draw() {
   for (let y = 0; y < L; y++) {
     for (let x = 0; x < L; x++) {
       ctx.fillStyle = spin[y][x] === 1 ? "#000000" : "#ffffff";
-      ctx.fillRect(x * dx, y * dy, dx, dy);
+      // y grows North, so flip vertically when drawing to the canvas (which grows downward)
+      ctx.fillRect(x * dx, (L - 1 - y) * dy, dx, dy);
     }
   }
 }
@@ -84,13 +90,14 @@ function energy_near(x, y) {
   const spin_C  = spin[y][x];
   const spin_N  = spin[yp][x],  spin_S  = spin[ym][x],  spin_E  = spin[y][xp],  spin_W  = spin[y][xm];
   const spin_NN = spin[yp2][x], spin_SS = spin[ym2][x], spin_EE = spin[y][xp2], spin_WW = spin[y][xm2];
+  const spin_NE = spin[yp][xp], spin_NW = spin[yp][xm], spin_SE = spin[ym][xp], spin_SW = spin[ym][xm];
 
   const DW_N = spin_C * spin_N;
   const DW_S = spin_C * spin_S;
   const DW_E = spin_C * spin_E;
   const DW_W = spin_C * spin_W;
 
-  const DW_energy = -1 * (DW_N + DW_S + DW_E + DW_W);
+  const DW_energy = -J * (DW_N + DW_S + DW_E + DW_W);
 
   // // external field depends on domain wall configuration
   // var spin_energies = 0;
@@ -99,6 +106,9 @@ function energy_near(x, y) {
   // if (DW_E === -1 || DW_W === -1) spin_energies += h * spin_C;
   // return DW_energy + spin_energies;
   const spin_energy = -h * spin_C;
+
+    // const K_energy = -K * (spin_N * spin_C * spin_E + spin_C * spin_S * spin_SE + spin_NW * spin_W * spin_C) -
+    //                 -K * (spin_S * spin_C * spin_E + spin_C * spin_N * spin_NE + spin_SW * spin_W * spin_C);
 
   const K_energy = -K * (spin_NN * spin_N * spin_C + spin_N * spin_C * spin_S + spin_C * spin_S * spin_SS) -
                     -K * (spin_EE * spin_E * spin_C + spin_E * spin_C * spin_W + spin_C * spin_W * spin_WW);
@@ -130,6 +140,11 @@ document.getElementById("Lslider").addEventListener("input", e => {
 document.getElementById("Hslider").addEventListener("input", e => {
   h = parseFloat(e.target.value);
   document.getElementById("Hval").textContent = h.toFixed(1);
+});
+
+document.getElementById("Jslider").addEventListener("input", e => {
+  J = parseFloat(e.target.value);
+  document.getElementById("Jval").textContent = J.toFixed(2);
 });
 
 document.getElementById("Kslider").addEventListener("input", e => {

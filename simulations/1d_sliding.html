@@ -1,0 +1,68 @@
+---
+layout: default
+title: "1D Sliding"
+blurb: "1D analog of the unidirectional sliding model, with asynchronous slide-and-vote dynamics and a spacetime history display."
+visibility: hidden
+order: 220
+---
+
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<h2>1D Sliding</h2>
+
+<div class="sim-container">
+  <canvas id="lattice" width="400" height="400" style="border:1px solid #aaa;"></canvas>
+
+  <div class="controls">
+    <div>
+      <label>System size L = <span id="Lval">NULL</span></label>
+      <input type="range" id="Lslider" min="10" max="300" step="2">
+    </div>
+
+    <div>
+      <label>Temperature T = <span id="Tval">NULL</span></label>
+      <input type="range" id="Tslider" min="0.0" max="1" step="0.01">
+    </div>
+
+    <div>
+      <label> Bias h = <span id="Hval">NULL</span></label>
+      <input type="range" id="Hslider" min="-.2" max=".2" step="0.01">
+    </div>
+
+    <div>
+      <label>Velocity V = <span id="Vval">NULL</span></label>
+      <input type="range" id="Vslider" min="0" max="4" step="0.1">
+    </div>
+
+    <div>
+      <label>Speed = <span id="Speedval">NULL</span></label>
+      <input type="range" id="Speedslider" min="0.1" max="5" step="0.1">
+    </div>
+
+    <div>
+      <label>\(\delta = \left(1 + e^{-2\beta(J-|h|)}\right)^{-1}\) = <span id="Deltaval">NULL</span></label>
+    </div>
+
+    <div>
+        <button id="toggleBtn">⏸️ Pause</button>
+        <button id="middleBtn">Flip</button>
+        <button id="slideBtn">Slide</button>
+        <button id="voteBtn">Vote</button>
+    </div>
+
+    <div>
+      <button id="resetBtn">🔄 Reset</button>
+    </div>
+  </div>
+</div>
+
+<p style="max-width:600px">
+The 1D analog of the unidirectional sliding model: two layers of spins on a ring, one
+sliding right and the other sliding left at velocity V, updated by asynchronous
+single-site heat-bath votes. White = both layers agree on 0, black = both agree on 1,
+grey = the layers disagree. <br><br>
+
+The current state of the system is the top row, and lower rows are the history.
+</p>
+
+<script src="{{ '/assets/js/1d_sliding.js' | relative_url }}"></script>
