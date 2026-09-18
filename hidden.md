@@ -6,7 +6,7 @@ permalink: /hidden/
 sitemap: false
 ---
 
-Simulations that aren't ready for the <a href="{{ '/simulations/' | relative_url }}">Simulations</a> page yet. Half-finished, half-broken, or just not interesting enough to show off. To promote one, flip `visibility: hidden` to `visible` in its front matter.
+You found my secret hidden simulations page! Good job :) Let me know if you like any of these, or if you have any quetions or suggestions.
 
 
 {% include sim_list.html visibility="hidden" %}

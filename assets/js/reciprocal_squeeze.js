@@ -98,7 +98,7 @@ function step() {
 
     // divide by 1 + 3|R| so the field scale is comparable across R. |R| matters: the
     // divisor would vanish at R = -1/3 and go negative below it, flipping the sign of dE
-    const dE = (energy_up - energy_down) / (1 + 3 * Math.abs(R));
+    const dE = (energy_up - energy_down);
 
     // heat bath: resample the spin from its conditional distribution.
     // at T = 0 the exponent diverges but the Boltzmann factor does not, so this stays
